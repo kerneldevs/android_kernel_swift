@@ -658,12 +658,13 @@ static int kgsl_open(struct inode *inodep, struct file *filep)
 	struct kgsl_device_private *dev_priv;
 	struct kgsl_device *device;
 	unsigned int minor = iminor(inodep);
-
+	printk(KERN_ERR "[wingrime]KGSL E!\n");
 	device = kgsl_get_minor(minor);
 	BUG_ON(device == NULL);
 
 	if (filep->f_flags & O_EXCL) {
 		KGSL_DRV_ERR(device, "O_EXCL not allowed\n");
+		printk(KERN_ERR "[wingrime]KGSL XBAD NOEXEC \n");	
 		return -EBUSY;
 	}
 
@@ -672,6 +673,7 @@ static int kgsl_open(struct inode *inodep, struct file *filep)
 		KGSL_DRV_ERR(device,
 			"Runtime PM: Unable to wake up the device, rc = %d\n",
 			result);
+		printk(KERN_ERR "[wingrime]KGSL XBAD pm_runtime_get_sync;!\n");		
 		return result;
 	}
 	result = 0;
@@ -680,6 +682,7 @@ static int kgsl_open(struct inode *inodep, struct file *filep)
 	if (dev_priv == NULL) {
 		KGSL_DRV_ERR(device, "kzalloc failed(%d)\n",
 			sizeof(struct kgsl_device_private));
+		printk(KERN_ERR "[wingrime]KGSL Error  kzalloc;!\n");
 		result = -ENOMEM;
 		goto err_pmruntime;
 	}
@@ -691,6 +694,7 @@ static int kgsl_open(struct inode *inodep, struct file *filep)
 	dev_priv->process_priv = kgsl_get_process_private(dev_priv);
 	if (dev_priv->process_priv ==  NULL) {
 		result = -ENOMEM;
+		printk(KERN_ERR "[wingrime]KGSL Error kgsl_get_process_private(dev_priv);!\n");
 		goto err_freedevpriv;
 	}
 
@@ -701,6 +705,7 @@ static int kgsl_open(struct inode *inodep, struct file *filep)
 		result = device->ftbl->start(device, true);
 
 		if (result) {
+			printk(KERN_ERR "[wingrime]KGSL Error device->ftbl->start(device, true);!\n");
 			mutex_unlock(&device->mutex);
 			goto err_putprocess;
 		}
@@ -714,7 +719,7 @@ static int kgsl_open(struct inode *inodep, struct file *filep)
 	KGSL_DRV_INFO(device, "Initialized %s: mmu=%s pagetable_count=%d\n",
 		device->name, kgsl_mmu_enabled() ? "on" : "off",
 		kgsl_pagetable_count);
-
+	printk(KERN_ERR "[wingrime]KGSL XGOOD!\n");
 	return result;
 
 err_putprocess:
@@ -724,6 +729,7 @@ err_freedevpriv:
 	kfree(dev_priv);
 err_pmruntime:
 	pm_runtime_put(device->parentdev);
+	printk(KERN_ERR "[wingrime]KGSL XBAD!\n");
 	return result;
 }
 
