@@ -1,5 +1,6 @@
 /* Copyright (c) 2008-2011, Code Aurora Forum. All rights reserved.
  * Copyright (C) 2011 Sony Ericsson Mobile Communications AB.
+ * Copyright (C) 2012 PolishBlood Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -669,13 +670,6 @@ static int kgsl_open(struct inode *inodep, struct file *filep)
 	}
 
 	result = pm_runtime_get_sync(device->parentdev);
-	if (result < 0) {
-		KGSL_DRV_ERR(device,
-			"Runtime PM: Unable to wake up the device, rc = %d\n",
-			result);
-		printk(KERN_ERR "[wingrime]KGSL XBAD pm_runtime_get_sync;!\n");		
-		return result;
-	}
 	result = 0;
 
 	dev_priv = kzalloc(sizeof(struct kgsl_device_private), GFP_KERNEL);
